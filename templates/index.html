@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Placement Predictor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+  <main class="page-wrap">
+    <div class="container py-5">
+      <div class="row justify-content-center">
+        <div class="col-lg-8 col-xl-7">
+          <div class="app-card">
+            <h1 class="title">Student Placement Predictor</h1>
+            <p class="subtitle">Estimate your placement probability and get personalized suggestions.</p>
+
+            <form id="predictForm" class="row g-3 mt-1">
+              <div class="col-md-6">
+                <label for="cgpa" class="form-label">CGPA (0-10)</label>
+                <input type="number" step="0.01" min="0" max="10" class="form-control" id="cgpa" required />
+              </div>
+
+              <div class="col-md-6">
+                <label for="skills" class="form-label">Number of Skills</label>
+                <input type="number" min="0" class="form-control" id="skills" required />
+              </div>
+
+              <div class="col-md-6">
+                <label for="internship" class="form-label">Internship Experience</label>
+                <select class="form-select" id="internship" required>
+                  <option value="yes">Yes</option>
+                  <option value="no" selected>No</option>
+                </select>
+              </div>
+
+              <div class="col-md-6">
+                <label for="projects" class="form-label">Projects Completed</label>
+                <input type="number" min="0" class="form-control" id="projects" required />
+              </div>
+
+              <div class="col-md-12">
+                <label for="communication" class="form-label">Communication Skills Rating (1-10)</label>
+                <input type="number" min="1" max="10" class="form-control" id="communication" required />
+              </div>
+
+              <div class="col-12 d-flex gap-2 mt-2">
+                <button type="submit" class="btn btn-primary px-4" id="submitBtn">
+                  <span class="btn-text">Predict</span>
+                  <span class="spinner-border spinner-border-sm d-none" id="loadingSpinner" role="status" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-outline-secondary" id="resetBtn">Reset</button>
+              </div>
+            </form>
+
+            <div id="alertBox" class="alert alert-danger mt-4 d-none" role="alert"></div>
+
+            <div id="resultCard" class="result-card mt-4 d-none">
+              <h5 class="mb-2">Prediction Result</h5>
+              <p class="mb-2">Placement Probability: <strong id="probabilityText"></strong></p>
+              <p class="mb-3">Result: <span id="labelBadge" class="badge"></span></p>
+              <h6>Improvement Suggestions</h6>
+              <ul id="suggestionsList" class="mb-0"></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const form = document.getElementById("predictForm");
+    const resetBtn = document.getElementById("resetBtn");
+    const submitBtn = document.getElementById("submitBtn");
+    const loadingSpinner = document.getElementById("loadingSpinner");
+    const btnText = document.querySelector(".btn-text");
+
+    const resultCard = document.getElementById("resultCard");
+    const probabilityText = document.getElementById("probabilityText");
+    const labelBadge = document.getElementById("labelBadge");
+    const suggestionsList = document.getElementById("suggestionsList");
+    const alertBox = document.getElementById("alertBox");
+
+    function showError(message) {
+      alertBox.textContent = message;
+      alertBox.classList.remove("d-none");
+    }
+
+    function clearError() {
+      alertBox.classList.add("d-none");
+      alertBox.textContent = "";
+    }
+
+    function validateInputs(data) {
+      if (data.cgpa < 0 || data.cgpa > 10) {
+        return "CGPA must be between 0 and 10.";
+      }
+      if (data.skills < 0) {
+        return "Number of skills must be non-negative.";
+      }
+      if (data.projects < 0) {
+        return "Projects completed must be non-negative.";
+      }
+      if (data.communication < 1 || data.communication > 10) {
+        return "Communication rating must be between 1 and 10.";
+      }
+      return null;
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      clearError();
+
+      const payload = {
+        cgpa: parseFloat(document.getElementById("cgpa").value),
+        skills: parseInt(document.getElementById("skills").value, 10),
+        internship: document.getElementById("internship").value,
+        projects: parseInt(document.getElementById("projects").value, 10),
+        communication: parseInt(document.getElementById("communication").value, 10),
+      };
+
+      const validationError = validateInputs(payload);
+      if (validationError) {
+        showError(validationError);
+        return;
+      }
+
+      submitBtn.disabled = true;
+      btnText.textContent = "Predicting";
+      loadingSpinner.classList.remove("d-none");
+
+      try {
+        const response = await fetch("/predict", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || "Prediction failed. Please try again.");
+        }
+
+        probabilityText.textContent = `${result.probability}%`;
+        labelBadge.textContent = result.label;
+        labelBadge.className = `badge text-bg-${result.badge}`;
+
+        suggestionsList.innerHTML = "";
+        result.suggestions.forEach((item) => {
+          const li = document.createElement("li");
+          li.textContent = item;
+          suggestionsList.appendChild(li);
+        });
+
+        resultCard.classList.remove("d-none");
+      } catch (error) {
+        showError(error.message || "Something went wrong.");
+      } finally {
+        submitBtn.disabled = false;
+        btnText.textContent = "Predict";
+        loadingSpinner.classList.add("d-none");
+      }
+    });
+
+    resetBtn.addEventListener("click", () => {
+      form.reset();
+      clearError();
+      resultCard.classList.add("d-none");
+      suggestionsList.innerHTML = "";
+      probabilityText.textContent = "";
+      labelBadge.textContent = "";
+      labelBadge.className = "badge";
+    });
+  </script>
+</body>
+</html>
