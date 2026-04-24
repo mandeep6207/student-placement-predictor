@@ -245,3 +245,12 @@ body {
     padding: 1.5rem;
   }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-up,
+  .delay-1,
+  .delay-2,
+  .delay-3 {
+    animation: none !important;
+  }
+}
