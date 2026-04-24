@@ -16,9 +16,11 @@ from sklearn.model_selection import train_test_split
 BASE_DIR = Path(__file__).resolve().parents[1]
 MODEL_PATH = BASE_DIR / "model.pkl"
 FEATURE_NAMES = ["CGPA", "Skills", "Internship", "Projects", "Communication"]
+RANDOM_STATE = 42
+TEST_SIZE = 0.2
 
 
-def generate_synthetic_data(rows: int = 600, seed: int = 42) -> pd.DataFrame:
+def generate_synthetic_data(rows: int = 600, seed: int = RANDOM_STATE) -> pd.DataFrame:
     np.random.seed(seed)
 
     cgpa = np.round(np.random.uniform(4.2, 10.0, rows), 2)
@@ -122,8 +124,8 @@ def train_and_save_model() -> None:
     X_train, X_test, y_train, y_test = train_test_split(
         X,
         y,
-        test_size=0.2,
-        random_state=42,
+        test_size=TEST_SIZE,
+        random_state=RANDOM_STATE,
         stratify=y,
     )
 
