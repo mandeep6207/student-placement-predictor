@@ -7,6 +7,7 @@ from typing import Any
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 DB_PATH = BASE_DIR / "database.db"
+DEFAULT_HISTORY_LIMIT = 100
 
 
 def get_connection() -> sqlite3.Connection:
@@ -118,7 +119,7 @@ def add_history_record(
         return int(cursor.lastrowid)
 
 
-def get_user_history(user_id: int, limit: int = 100) -> list[dict[str, Any]]:
+def get_user_history(user_id: int, limit: int = DEFAULT_HISTORY_LIMIT) -> list[dict[str, Any]]:
     with get_connection() as conn:
         rows = conn.execute(
             """
