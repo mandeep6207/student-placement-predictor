@@ -12,6 +12,9 @@ from reportlab.graphics.charts.piecharts import Pie
 from reportlab.graphics.shapes import Drawing, String
 
 
+SUGGESTION_SEPARATOR = "|"
+
+
 def _build_probability_pie(probability: float) -> Drawing:
     placed = max(0.0, min(100.0, probability))
     remaining = 100.0 - placed
@@ -108,7 +111,7 @@ def build_prediction_report(
     story.append(input_table)
     story.append(Spacer(1, 12))
 
-    suggestion_items = [item.strip() for item in str(record["suggestions"]).split("|") if item.strip()]
+    suggestion_items = [item.strip() for item in str(record["suggestions"]).split(SUGGESTION_SEPARATOR) if item.strip()]
     story.append(Paragraph("Personalized Suggestions", styles["Heading3"]))
     for item in suggestion_items:
         story.append(Paragraph(f"- {item}", styles["BodyText"]))
