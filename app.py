@@ -128,10 +128,14 @@ def get_result_label(probability: float) -> tuple[str, str]:
     return "Low Chance", "danger"
 
 
+def parse_internship_flag(value: Any) -> int:
+    return 1 if str(value).lower() in {"yes", "1", "true"} else 0
+
+
 def parse_and_validate_inputs(data: dict[str, Any]) -> dict[str, Any]:
     cgpa = float(data.get("cgpa", 0))
     skills = int(data.get("skills", 0))
-    internship = 1 if str(data.get("internship", "no")).lower() in {"yes", "1", "true"} else 0
+    internship = parse_internship_flag(data.get("internship", "no"))
     projects = int(data.get("projects", 0))
     communication = int(data.get("communication", 0))
 
