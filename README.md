@@ -29,6 +29,7 @@ An advanced Flask-based intelligent placement prediction system with multi-model
 - ML: scikit-learn (+ optional xgboost)
 - Data: pandas, numpy
 - PDF: reportlab
+- Security: Werkzeug password hashing
 - Frontend: Bootstrap 5, Chart.js, custom CSS
 
 ## Project Structure
