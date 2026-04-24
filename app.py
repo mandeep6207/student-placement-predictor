@@ -30,6 +30,8 @@ except ImportError:
 BASE_DIR = Path(__file__).resolve().parent
 MODEL_PATH = BASE_DIR / "model.pkl"
 TRAIN_SCRIPT_PATH = BASE_DIR / "utils" / "model_train.py"
+HIGH_CHANCE_THRESHOLD = 75
+MEDIUM_CHANCE_THRESHOLD = 40
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-secret-key-change-in-production")
@@ -119,9 +121,9 @@ def get_suggestions(
 
 
 def get_result_label(probability: float) -> tuple[str, str]:
-    if probability >= 75:
+    if probability >= HIGH_CHANCE_THRESHOLD:
         return "High Chance", "success"
-    if probability >= 40:
+    if probability >= MEDIUM_CHANCE_THRESHOLD:
         return "Medium Chance", "warning"
     return "Low Chance", "danger"
 
