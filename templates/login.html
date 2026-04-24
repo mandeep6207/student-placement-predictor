@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Login - PlacementIQ{% endblock %}
+
+{% block content %}
+  <section class="auth-wrap reveal-up">
+    <div class="auth-card">
+      <h2>Welcome Back</h2>
+      <p class="auth-sub">Log in to access your prediction dashboard and reports.</p>
+      <form method="post" class="row g-3 mt-1">
+        <div class="col-12">
+          <label for="username" class="form-label">Username</label>
+          <input id="username" name="username" type="text" class="form-control" required />
+        </div>
+        <div class="col-12">
+          <label for="password" class="form-label">Password</label>
+          <input id="password" name="password" type="password" class="form-control" required />
+        </div>
+        <div class="col-12 d-grid mt-2">
+          <button type="submit" class="btn btn-accent">Login</button>
+        </div>
+      </form>
+      <p class="mt-3 mb-0 small">No account? <a href="{{ url_for('signup') }}">Create one</a></p>
+    </div>
+  </section>
+{% endblock %}

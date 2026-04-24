@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - PlacementIQ{% endblock %}
+
+{% block head %}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+{% endblock %}
+
+{% block content %}
+  <section class="mb-4 reveal-up">
+    <div class="panel p-4">
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <div>
+          <p class="eyebrow mb-1">Smart Prediction Workspace</p>
+          <h2 class="mb-1">Welcome, {{ session.get('username', 'Student') }}</h2>
+          <p class="text-muted mb-0">Run predictions, inspect model insights, and download polished reports.</p>
+        </div>
+        <div class="chip-list">
+          <span class="chip" id="modelChip">Model: Loading...</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="row g-4">
+    <div class="col-xl-4">
+      <div class="panel p-4 h-100 reveal-up delay-1">
+        <h5 class="mb-3">Placement Input</h5>
+
+        <div id="alertBox" class="alert d-none" role="alert"></div>
+
+        <form id="predictForm" class="row g-3">
+          <div class="col-12">
+            <label class="form-label" for="cgpa">CGPA (0-10)</label>
+            <input id="cgpa" type="number" min="0" max="10" step="0.01" class="form-control" required />
+          </div>
+          <div class="col-12">
+            <label class="form-label" for="skills">Number of Skills</label>
+            <input id="skills" type="number" min="0" class="form-control" required />
+          </div>
+          <div class="col-12">
+            <label class="form-label" for="internship">Internship Experience</label>
+            <select id="internship" class="form-select" required>
+              <option value="yes">Yes</option>
+              <option value="no" selected>No</option>
+            </select>
+          </div>
+          <div class="col-12">
+            <label class="form-label" for="projects">Projects Completed</label>
+            <input id="projects" type="number" min="0" class="form-control" required />
+          </div>
+          <div class="col-12">
+            <label class="form-label" for="communication">Communication (1-10)</label>
+            <input id="communication" type="number" min="1" max="10" class="form-control" required />
+          </div>
+
+          <div class="col-12 d-flex gap-2 mt-2">
+            <button type="submit" id="submitBtn" class="btn btn-accent flex-grow-1">
+              <span class="btn-text">Predict</span>
+              <span class="spinner-border spinner-border-sm d-none" id="loadingSpinner" role="status" aria-hidden="true"></span>
+            </button>
+            <button type="button" id="resetBtn" class="btn btn-outline-secondary">Reset</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="col-xl-8">
+      <div class="row g-4">
+        <div class="col-12">
+          <div id="resultCard" class="panel p-4 d-none reveal-up delay-2">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+              <h5 class="mb-0">Prediction Result</h5>
+              <span id="labelBadge" class="badge"></span>
+            </div>
+            <h3 class="prob-text mb-2" id="probabilityText">0%</h3>
+            <p class="mb-3 text-muted" id="modelUsedText"></p>
+            <ul id="suggestionsList" class="mb-3"></ul>
+            <a id="downloadReportBtn" href="#" class="btn btn-dark btn-sm d-none">Download PDF Report</a>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="panel p-3 chart-panel reveal-up delay-2">
+            <h6>Feature Importance</h6>
+            <canvas id="featureImportanceChart" height="220"></canvas>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="panel p-3 chart-panel reveal-up delay-3">
+            <h6>Placement Probability Breakdown</h6>
+            <canvas id="probabilityPieChart" height="220"></canvas>
+          </div>
+        </div>
+
+        <div class="col-12">
+          <div class="panel p-3 chart-panel reveal-up delay-3">
+            <h6>Synthetic CGPA Distribution</h6>
+            <canvas id="cgpaHistogramChart" height="120"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='charts.js') }}"></script>
+{% endblock %}

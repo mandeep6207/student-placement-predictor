@@ -1,85 +1,120 @@
-# Student Placement Predictor
+# Student Placement Predictor (PlacementIQ)
 
-A lightweight, production-ready Flask web application that predicts a student's placement probability using a machine learning model.
+An advanced Flask-based intelligent placement prediction system with multi-model ML comparison, calibrated probabilities, user authentication, database-backed history, PDF reporting, and interactive dashboard charts.
 
-## Overview
+## Highlights
 
-This project uses a trained Logistic Regression model on synthetic student profile data to estimate placement chances and provide actionable improvement suggestions.
-
-## Features
-
-- Placement probability prediction (in percentage)
-- Result categories:
-  - High Chance (>= 75%)
-  - Medium Chance (40% to < 75%)
-  - Low Chance (< 40%)
-- Personalized suggestions based on profile gaps
-- Clean Bootstrap single-page UI
-- Reset button and loading spinner
-- Input validation on frontend and backend
-- Automatic model training if model file is missing
+- Multiple ML models trained and compared automatically:
+  - Logistic Regression
+  - Random Forest
+  - XGBoost (if available) or Gradient Boosting fallback
+- Metrics comparison for each model:
+  - Accuracy
+  - Precision
+  - Recall
+  - F1 Score
+- Best model auto-selected and saved
+- Probability calibration using sigmoid calibration
+- Dynamic, personalized suggestion engine
+- SQLite user authentication and prediction history
+- Downloadable PDF prediction report (with visual summaries)
+- Interactive charts via Chart.js:
+  - Feature importance bar chart
+  - Placement probability pie chart
+  - Synthetic CGPA histogram
 
 ## Tech Stack
 
-- Backend: Flask (Python)
-- ML: scikit-learn (Logistic Regression)
-- Data: pandas, numpy (synthetic dataset generation)
-- Frontend: HTML, CSS, Bootstrap 5
+- Backend: Flask, SQLite
+- ML: scikit-learn (+ optional xgboost)
+- Data: pandas, numpy
+- PDF: reportlab
+- Frontend: Bootstrap 5, Chart.js, custom CSS
 
 ## Project Structure
 
-```
+```text
 project/
 |-- app.py
 |-- model.pkl
+|-- database.db
 |-- README.md
 |-- requirements.txt
 |-- static/
-|   `-- style.css
+|   |-- style.css
+|   `-- charts.js
 |-- templates/
-|   `-- index.html
+|   |-- base.html
+|   |-- index.html
+|   |-- dashboard.html
+|   |-- history.html
+|   |-- login.html
+|   `-- signup.html
 `-- utils/
-    `-- model_train.py
+    |-- model_train.py
+    |-- database.py
+    `-- report_generator.py
 ```
 
 ## Input Features
 
-The model predicts placement probability from:
+The model predicts placement probability using:
 
 - CGPA (0-10)
 - Number of Skills
 - Internship Experience (Yes/No)
 - Projects Completed
-- Communication Skills Rating (1-10)
+- Communication Skills (1-10)
 
-## API
+## API Endpoints
 
-### POST /predict
+### POST /predict (authenticated)
 
-Request body (JSON):
+Request body:
 
 ```json
 {
-  "cgpa": 8.2,
-  "skills": 6,
+  "cgpa": 8.1,
+  "skills": 7,
   "internship": "yes",
   "projects": 4,
   "communication": 8
 }
 ```
 
-Response (JSON):
+Response body:
 
 ```json
 {
-  "probability": 86.37,
+  "probability": 88.62,
   "label": "High Chance",
   "badge": "success",
   "suggestions": [
-    "Great profile. Keep refining projects and communication for top opportunities."
-  ]
+    "Excellent momentum. Keep polishing projects and interview communication to target top-tier opportunities."
+  ],
+  "feature_importance": {
+    "CGPA": 0.33,
+    "Skills": 0.22,
+    "Internship": 0.18,
+    "Projects": 0.15,
+    "Communication": 0.12
+  },
+  "selected_model": "Logistic Regression",
+  "prediction_id": 12,
+  "probability_breakdown": {
+    "placed": 88.62,
+    "not_placed": 11.38
+  }
 }
 ```
+
+### GET /api/model-insights (authenticated)
+
+Returns selected model name, model metrics table, feature importance map, and CGPA histogram data.
+
+### GET /report/<record_id> (authenticated)
+
+Downloads a PDF report for that prediction record.
 
 ## Local Setup
 
@@ -90,7 +125,7 @@ git clone https://github.com/mandeep6207/Predictor.git
 cd Predictor
 ```
 
-### 2. (Optional) Create virtual environment
+### 2. Create and activate virtual environment (recommended)
 
 Windows PowerShell:
 
@@ -105,50 +140,55 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-### 4. Run the application
-
-```bash
-python app.py
-```
-
-App runs at:
-
-- http://127.0.0.1:5000
-
-## Model Training Details
-
-- Synthetic dataset size: 350 rows
-- Features: CGPA, Skills, Internship, Projects, Communication
-- Target: Placed (0 or 1)
-- Train/test split: 80/20
-- Model: Logistic Regression
-- Accuracy is printed in console during training
-
-To retrain manually:
+### 4. Train model (optional, app auto-trains if missing)
 
 ```bash
 python utils/model_train.py
 ```
 
+### 5. Run app
+
+```bash
+python app.py
+```
+
+Open: http://127.0.0.1:5000
+
+## Authentication Flow
+
+- Sign up at `/signup`
+- Login at `/login`
+- Access:
+  - Dashboard: `/dashboard`
+  - History: `/history`
+
+Each user sees only their own prediction history and reports.
+
+## Model Training Notes
+
+- Synthetic dataset generated programmatically
+- Train/test split with stratification
+- Candidate models are trained and calibrated
+- Best model selected by F1 score (with accuracy tie-break)
+- Bundle saved in `model.pkl` with:
+  - model object
+  - selected model metadata
+  - metrics comparison
+  - feature importance
+  - synthetic CGPA distribution
+
 ## Validation Rules
 
-- CGPA must be between 0 and 10
-- Skills and Projects must be non-negative
-- Communication must be between 1 and 10
+- CGPA: 0 to 10
+- Skills and projects: non-negative
+- Communication: 1 to 10
 
-## Improvement Suggestions Logic
+## Deployment Notes
 
-- Low CGPA: focus on academic performance
-- Low skills: improve technical skill set
-- No internship: apply for internships for practical exposure
-
-## Future Improvements
-
-- Use real placement dataset
-- Add model explainability (feature importance/SHAP)
-- Add authentication and user history tracking
-- Deploy on Render or Azure App Service
+- Set a strong `SECRET_KEY` environment variable in production.
+- Disable Flask debug mode in production.
+- This project is deployable to services like Render, Azure App Service, or a VM/container.
 
 ## License
 
-This project is for learning and portfolio use.
+This project is for learning and portfolio purposes.
