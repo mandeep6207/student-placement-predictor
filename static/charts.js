@@ -12,6 +12,8 @@ const suggestionsList = document.getElementById("suggestionsList");
 const alertBox = document.getElementById("alertBox");
 const modelChip = document.getElementById("modelChip");
 const downloadReportBtn = document.getElementById("downloadReportBtn");
+const PREDICT_API_URL = "/predict";
+const INSIGHTS_API_URL = "/api/model-insights";
 
 let featureChart = null;
 let probabilityPie = null;
@@ -137,7 +139,7 @@ function drawCgpaHistogram(labels, values) {
 }
 
 async function loadModelInsights() {
-  const response = await fetch("/api/model-insights");
+  const response = await fetch(INSIGHTS_API_URL);
   const data = await response.json();
   if (!response.ok) {
     throw new Error(data.error || "Failed to load model insights.");
@@ -149,7 +151,7 @@ async function loadModelInsights() {
 }
 
 async function submitPrediction(payload) {
-  const response = await fetch("/predict", {
+  const response = await fetch(PREDICT_API_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
