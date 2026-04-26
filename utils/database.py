@@ -120,6 +120,7 @@ def add_history_record(
 
 
 def get_user_history(user_id: int, limit: int = DEFAULT_HISTORY_LIMIT) -> list[dict[str, Any]]:
+    safe_limit = max(1, int(limit))
     with get_connection() as conn:
         rows = conn.execute(
             """
@@ -130,7 +131,7 @@ def get_user_history(user_id: int, limit: int = DEFAULT_HISTORY_LIMIT) -> list[d
             ORDER BY id DESC
             LIMIT ?
             """,
-            (user_id, limit),
+            (user_id, safe_limit),
         ).fetchall()
     return [dict(row) for row in rows]
 
