@@ -12,7 +12,7 @@ from reportlab.graphics.charts.piecharts import Pie
 from reportlab.graphics.shapes import Drawing, String
 
 
-SUGGESTION_SEPARATOR = "|"
+SUGGESTION_SEPARATOR = " | "
 
 
 def _build_probability_pie(probability: float) -> Drawing:
