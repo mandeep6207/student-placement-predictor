@@ -187,6 +187,7 @@ Each user sees only their own prediction history and reports.
 ## Deployment Notes
 
 - Set a strong `SECRET_KEY` environment variable in production.
+- Example (PowerShell): `$env:SECRET_KEY = "replace-with-a-long-random-value"`
 - Disable Flask debug mode in production.
 - This project is deployable to services like Render, Azure App Service, or a VM/container.
 
