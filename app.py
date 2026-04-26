@@ -5,7 +5,7 @@ import pickle
 import subprocess
 from functools import wraps
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 import numpy as np
 from flask import Flask, flash, jsonify, redirect, render_template, request, send_file, session, url_for
@@ -38,7 +38,7 @@ app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-secret-key-change-in-pro
 init_db()
 
 
-def login_required(view_func):
+def login_required(view_func: Callable[..., Any]) -> Callable[..., Any]:
     @wraps(view_func)
     def wrapper(*args, **kwargs):
         if "user_id" not in session:
