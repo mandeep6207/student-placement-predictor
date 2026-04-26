@@ -122,8 +122,8 @@ Downloads a PDF report for that prediction record.
 ### 1. Clone repository
 
 ```bash
-git clone https://github.com/mandeep6207/student-placement-predictor.git
-cd student-placement-predictor
+git clone https://github.com/mandeep6207/Predictor.git
+cd Predictor
 ```
 
 ### 2. Create and activate virtual environment (recommended)
