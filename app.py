@@ -110,11 +110,11 @@ def get_suggestions(
     if communication < 5:
         suggestions.append("Practice concise storytelling: explain one project per day in under 90 seconds.")
 
-    if probability >= 75 and not suggestions:
+    if probability >= HIGH_CHANCE_THRESHOLD and not suggestions:
         suggestions.append(
             "Excellent momentum. Keep polishing projects and interview communication to target top-tier opportunities."
         )
-    elif probability < 40:
+    elif probability < MEDIUM_CHANCE_THRESHOLD:
         suggestions.append("Focus on one improvement plan for 6 weeks and re-assess with updated inputs.")
 
     return suggestions[:5]
