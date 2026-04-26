@@ -129,7 +129,7 @@ def get_result_label(probability: float) -> tuple[str, str]:
 
 
 def parse_internship_flag(value: Any) -> int:
-    return 1 if str(value).lower() in {"yes", "1", "true"} else 0
+    return 1 if str(value).strip().lower() in {"yes", "1", "true"} else 0
 
 
 def parse_and_validate_inputs(data: dict[str, Any]) -> dict[str, Any]:
