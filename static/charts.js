@@ -147,7 +147,7 @@ async function loadModelInsights() {
 
   modelChip.textContent = `Model: ${data.selected_model}`;
   drawFeatureImportance(data.feature_importance || {});
-  drawCgpaHistogram(data.cgpa_histogram.labels || [], data.cgpa_histogram.values || []);
+  drawCgpaHistogram(data.cgpa_histogram?.labels || [], data.cgpa_histogram?.values || []);
 }
 
 async function submitPrediction(payload) {
