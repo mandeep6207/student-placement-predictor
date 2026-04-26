@@ -54,10 +54,10 @@ def generate_synthetic_data(rows: int = 600, seed: int = RANDOM_STATE) -> pd.Dat
 
 def _get_candidate_models() -> list[tuple[str, Any]]:
     candidates: list[tuple[str, Any]] = [
-        ("Logistic Regression", LogisticRegression(max_iter=1500, random_state=42)),
+        ("Logistic Regression", LogisticRegression(max_iter=1500, random_state=RANDOM_STATE)),
         (
             "Random Forest",
-            RandomForestClassifier(n_estimators=300, min_samples_split=4, random_state=42),
+            RandomForestClassifier(n_estimators=300, min_samples_split=4, random_state=RANDOM_STATE),
         ),
     ]
 
@@ -75,7 +75,7 @@ def _get_candidate_models() -> list[tuple[str, Any]]:
                     colsample_bytree=0.9,
                     objective="binary:logistic",
                     eval_metric="logloss",
-                    random_state=42,
+                    random_state=RANDOM_STATE,
                 ),
             )
         )
@@ -83,7 +83,7 @@ def _get_candidate_models() -> list[tuple[str, Any]]:
         candidates.append(
             (
                 "Gradient Boosting",
-                GradientBoostingClassifier(random_state=42),
+                GradientBoostingClassifier(random_state=RANDOM_STATE),
             )
         )
 
