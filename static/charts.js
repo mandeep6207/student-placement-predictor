@@ -173,7 +173,7 @@ function updateResultCard(result) {
   modelUsedText.textContent = `Predicted using: ${result.selected_model}`;
 
   suggestionsList.innerHTML = "";
-  result.suggestions.forEach((tip) => {
+  (Array.isArray(result.suggestions) ? result.suggestions : []).forEach((tip) => {
     const li = document.createElement("li");
     li.textContent = tip;
     suggestionsList.appendChild(li);
