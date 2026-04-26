@@ -166,6 +166,12 @@ body {
   color: #fff;
 }
 
+.btn:focus-visible,
+.nav-link:focus-visible {
+  outline: 3px solid rgba(29, 120, 116, 0.35);
+  outline-offset: 2px;
+}
+
 .chip-list {
   display: flex;
   gap: 0.4rem;
