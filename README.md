@@ -165,6 +165,10 @@ Open: http://127.0.0.1:5000
 
 Each user sees only their own prediction history and reports.
 
+## Quick Troubleshooting
+
+- If dashboard charts fail to load, verify you are logged in before opening `/dashboard`.
+
 ## Model Training Notes
 
 - Synthetic dataset generated programmatically
