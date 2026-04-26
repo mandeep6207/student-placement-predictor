@@ -39,7 +39,7 @@
                 <td>{{ 'Yes' if item.internship == 1 else 'No' }}</td>
                 <td>{{ item.projects }}</td>
                 <td>{{ item.communication }}</td>
-                <td>{{ item.probability }}%</td>
+                <td>{{ '%.2f'|format(item.probability) }}%</td>
                 <td>
                   {% if item.label == 'High Chance' %}
                     <span class="badge text-bg-success">{{ item.label }}</span>
