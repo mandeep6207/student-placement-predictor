@@ -236,6 +236,9 @@ if (resetBtn) {
     clearAlert();
     resultCard.classList.add("d-none");
     suggestionsList.innerHTML = "";
+    probabilityText.textContent = "0%";
+    modelUsedText.textContent = "";
+    labelBadge.textContent = "";
     downloadReportBtn.classList.add("d-none");
   });
 }
